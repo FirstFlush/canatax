@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='canatax',
-    version='0.1',
+    version='0.1.1',
     description='A simple Canadian income tax calculator.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',

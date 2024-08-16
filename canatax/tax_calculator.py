@@ -4,7 +4,6 @@ from canatax.tax_rates import *
 from canatax.utils import percent_to_decimal
 
 
-
 class TaxCalculator:
 
     EI_RATE = 1.66
@@ -31,8 +30,8 @@ class TaxCalculator:
     }
 
     def __init__(self, income:float|int, province:ProvinceOrTerritory):
-        # if not isinstance(province_or_territory, ProvinceOrTerritory):
-        #     raise TypeError(f"Parameter 'province_or_territory' must be of type ProvinceEnum, not `{type(province_or_territory)}`")
+        # if not isinstance(province, ProvinceOrTerritory):
+        #     raise TypeError(f"Parameter 'province' must be of type ProvinceEnum, not `{type(province)}`")
         self.income = income
         self.federal_tax = FederalTaxRate()
         self.provincial_tax:ProvincialTaxRate = self.ENUM_MAPPING[province]()
@@ -41,12 +40,12 @@ class TaxCalculator:
     @classmethod
     def calculate(cls, income:float|int, province:str) -> TaxEstimate:
         try:
-            province_or_territory = ProvinceOrTerritory(province.upper())
+            province = ProvinceOrTerritory(province.upper())
         except ValueError:
             raise
         calculator = cls(
             income=income, 
-            province_or_territory=province_or_territory
+            province=province
         )
         return calculator.calculate_all()
 

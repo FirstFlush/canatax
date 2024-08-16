@@ -136,7 +136,6 @@ class NewfoundlandTaxRate(ProvincialTaxRate):
     ]
 
 
-
 class NorthWestTerritoriesTaxRate(ProvincialTaxRate):
     """ 2024
     ==========================

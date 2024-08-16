@@ -37,11 +37,11 @@ estimate = TaxCalculator.calculate(income=income, province=province)
 calculator = TaxCalculator(income=income, province=province)
 estimate = calculator.calculate_all()
 
-
 # Output the results
-print(f"Federal Tax: ${estimate.federal_tax:.2f}")
-print(f"Provincial Tax: ${estimate.provincial_tax:.2f}")
-print(f"CPP Contribution: ${estimate.cpp:.2f}")
-print(f"EI Contribution: ${estimate.ei:.2f}")
-print(f"After-Tax Income: ${estimate.after_tax_income:.2f}")
+print(estimate.federal_tax)
+print(estimate.provincial_tax)
+print(estimate.cpp)
+print(estimate.ei)
+print(estimate.total_tax)
+print(estimate.after_tax_income)
 ```

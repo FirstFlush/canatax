@@ -10,4 +10,3 @@ class TaxEstimate:
     ei: float
     total_tax: float
     net_income: float
-    # marginal_tax_rate: float

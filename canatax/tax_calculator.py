@@ -30,12 +30,9 @@ class TaxCalculator:
     }
 
     def __init__(self, income:float|int, province:ProvinceOrTerritory):
-        # if not isinstance(province, ProvinceOrTerritory):
-        #     raise TypeError(f"Parameter 'province' must be of type ProvinceEnum, not `{type(province)}`")
         self.income = income
         self.federal_tax = FederalTaxRate()
         self.provincial_tax:ProvincialTaxRate = self.ENUM_MAPPING[province]()
-
 
     @classmethod
     def calculate(cls, income:float|int, province:str) -> TaxEstimate:
@@ -49,22 +46,21 @@ class TaxCalculator:
         )
         return calculator.calculate_all()
 
-
     def calculate_all(self) -> TaxEstimate: 
         federal_tax, provincial_tax = self._tax()
         ei = self._ei()
         cpp = self._cpp()
         total_tax = federal_tax + provincial_tax + ei + cpp
-        after_tax_income = self.income - total_tax
+        net_income = self.income - total_tax
         return TaxEstimate(
+            gross_income=self.income,
             federal_tax=round(federal_tax, 2),
             provincial_tax=round(provincial_tax, 2),
             ei=round(ei, 2),
             cpp=round(cpp, 2),
             total_tax=round(total_tax, 2),
-            after_tax_income=round(after_tax_income, 2),
+            net_income=round(net_income, 2),
         )
-
 
     def _cpp(self) -> float:
         if self.income > self.CPP_MAX_EARNINGS:
@@ -72,13 +68,11 @@ class TaxCalculator:
         else:
             return self.income * percent_to_decimal(self.CPP_RATE)
 
-
     def _ei(self) -> float:
         if self.income > self.EI_MAX_EARNINGS:
             return self.EI_MAX_AMOUNT
         else:
             return self.income * percent_to_decimal(self.EI_RATE)
-
 
     def _tax(self) -> tuple[float, float]:
         if not isinstance(self.income, (float, int)):

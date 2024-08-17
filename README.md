@@ -1,5 +1,9 @@
 # Canatax: The Canadian Income Tax Calculator
 
+![Development Status](https://img.shields.io/badge/status-in_development-orange)
+
+**Note:** This package is currently in development. Expect frequent updates and potential breaking changes.
+
 **Canatax** is a simple and straightforward package for calculating Canadian income taxes based on the current year's tax rates. Whether you want to quickly calculate your federal and provincial taxes, CPP, EI, or after-tax income, Canatax makes it easy with no additional dependencies.
 
 ## Features

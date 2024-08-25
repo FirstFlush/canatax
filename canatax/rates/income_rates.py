@@ -1,7 +1,7 @@
 from canatax.utils import percent_to_decimal
 
 
-class BaseTaxRate:
+class BaseIncomeTaxRate:
     
     brackets:None | list[tuple[float|int, int]] = None
 
@@ -19,11 +19,11 @@ class BaseTaxRate:
         return tax_owed
 
 
-class ProvincialTaxRate(BaseTaxRate):
+class ProvincialIncomeTaxRate(BaseIncomeTaxRate):
     ...
 
 
-class FederalTaxRate(BaseTaxRate):
+class FederalIncomeTaxRate(BaseIncomeTaxRate):
     """ 2024:
     ==========================
     15% 	on the portion of taxable income that is $55,867 or less, plus
@@ -41,7 +41,7 @@ class FederalTaxRate(BaseTaxRate):
     ]
 
 
-class AlbertaTaxRate(ProvincialTaxRate):
+class AlbertaIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
     10% 	on the portion of taxable income that is $148,269 or less, plus
@@ -59,7 +59,7 @@ class AlbertaTaxRate(ProvincialTaxRate):
     ]
 
 
-class BritishColumbiaTaxRate(ProvincialTaxRate):
+class BritishColumbiaIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
     5.06% 	on the portion of taxable income that is $47,937 or less, plus
@@ -81,7 +81,7 @@ class BritishColumbiaTaxRate(ProvincialTaxRate):
     ]
 
 
-class ManitobaTaxRate(ProvincialTaxRate):
+class ManitobaIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
     10.8% 	on the portion of taxable income that is $47,000 or less, plus
@@ -95,7 +95,7 @@ class ManitobaTaxRate(ProvincialTaxRate):
     ]
 
 
-class NewBrunswickTaxRate(ProvincialTaxRate):
+class NewBrunswickIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
     9.4% 	on the portion of taxable income that is $49,958 or less, plus
@@ -112,7 +112,7 @@ class NewBrunswickTaxRate(ProvincialTaxRate):
 
 
 
-class NewfoundlandTaxRate(ProvincialTaxRate):
+class NewfoundlandIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
     8.7% 	on the portion of taxable income that is $43,198 or less, plus
@@ -136,14 +136,14 @@ class NewfoundlandTaxRate(ProvincialTaxRate):
     ]
 
 
-class NorthWestTerritoriesTaxRate(ProvincialTaxRate):
+class NorthwestTerritoriesIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
 
     """
 
 
-class NovaScotiaTaxRate(ProvincialTaxRate):
+class NovaScotiaIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
     5.9% 	on the portion of taxable income that is $50,597 or less, plus
@@ -159,7 +159,7 @@ class NovaScotiaTaxRate(ProvincialTaxRate):
     ]
 
 
-class NunavutTaxRate(ProvincialTaxRate):
+class NunavutIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
     4% 	on the portion of taxable income that is $53,268 or less, plus
@@ -175,7 +175,7 @@ class NunavutTaxRate(ProvincialTaxRate):
     ]
 
 
-class OntarioTaxRate(ProvincialTaxRate):
+class OntarioIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
     5.05% 	on the portion of taxable income that is $51,446 or less, plus
@@ -193,7 +193,7 @@ class OntarioTaxRate(ProvincialTaxRate):
     ]
 
 
-class PEITaxRate(ProvincialTaxRate):
+class PEIIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
     9.65% 	on the portion of taxable income that is $32,656 or less, plus
@@ -211,7 +211,7 @@ class PEITaxRate(ProvincialTaxRate):
     ]
 
 
-class QuebecTaxRate(ProvincialTaxRate):
+class QuebecIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
     $51,780 or less 	14%
@@ -227,7 +227,7 @@ class QuebecTaxRate(ProvincialTaxRate):
     ]
 
 
-class SaskatchewanTaxRate(ProvincialTaxRate):
+class SaskatchewanIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
     10.5% 	on the portion of taxable income that is $52,057 or less, plus
@@ -241,7 +241,7 @@ class SaskatchewanTaxRate(ProvincialTaxRate):
     ]
 
 
-class YukonTaxRate(ProvincialTaxRate):
+class YukonIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
     6.4% 	on the portion of taxable income that is $55,867 or less, plus

@@ -1,10 +1,11 @@
+from canatax.calculators.base_calclulator import BaseCalculator
 from canatax.enums import ProvinceOrTerritory
-from canatax.tax_estimate import TaxEstimate
-from canatax.tax_rates import *
+from canatax.tax_estimate import IncomeTaxEstimate
+from canatax.rates.income_rates import *
 from canatax.utils import percent_to_decimal
 
 
-class TaxCalculator:
+class IncomeTaxCalculator(BaseCalculator):
 
     EI_RATE = 1.66
     EI_MAX_EARNINGS = 63200
@@ -13,29 +14,15 @@ class TaxCalculator:
     CPP_MAX_EARNINGS = 68500
     CPP_MAX_AMOUNT = 3867.50
 
-    ENUM_MAPPING = {
-        ProvinceOrTerritory.ALBERTA : AlbertaTaxRate,
-        ProvinceOrTerritory.BRITISH_COLUMBIA: BritishColumbiaTaxRate,
-        ProvinceOrTerritory.MANITOBA : ManitobaTaxRate,
-        ProvinceOrTerritory.ONTARIO : OntarioTaxRate,
-        ProvinceOrTerritory.NEW_BRUNSWICK : NewBrunswickTaxRate,
-        ProvinceOrTerritory.NEWFOUNDLAND : NewfoundlandTaxRate,
-        ProvinceOrTerritory.NORTHWEST_TERRITORIES : NorthWestTerritoriesTaxRate,
-        ProvinceOrTerritory.NOVA_SCOTIA: NovaScotiaTaxRate,
-        ProvinceOrTerritory.NUNAVUT : NunavutTaxRate,
-        ProvinceOrTerritory.PRINCE_EDWARD_ISLAND: PEITaxRate,
-        ProvinceOrTerritory.QUEBEC: QuebecTaxRate,
-        ProvinceOrTerritory.SASKATCHEWAN : SaskatchewanTaxRate,
-        ProvinceOrTerritory.YUKON: YukonTaxRate,
-    }
 
     def __init__(self, income:float|int, province:ProvinceOrTerritory):
+        super().__init__(province=province)
         self.income = income
-        self.federal_tax = FederalTaxRate()
-        self.provincial_tax:ProvincialTaxRate = self.ENUM_MAPPING[province]()
+        self.federal_tax = FederalIncomeTaxRate()
+        self.provincial_tax:ProvincialIncomeTaxRate = self.PROVINCE_MAPPING[self.province][0]()
 
     @classmethod
-    def calculate(cls, income:float|int, province:str) -> TaxEstimate:
+    def calculate(cls, income:float|int, province:str) -> IncomeTaxEstimate:
         try:
             province = ProvinceOrTerritory(province.upper())
         except ValueError:
@@ -46,13 +33,14 @@ class TaxCalculator:
         )
         return calculator.calculate_all()
 
-    def calculate_all(self) -> TaxEstimate: 
+    def calculate_all(self) -> IncomeTaxEstimate: 
         federal_tax, provincial_tax = self._tax()
         ei = self._ei()
         cpp = self._cpp()
         total_tax = federal_tax + provincial_tax + ei + cpp
         net_income = self.income - total_tax
-        return TaxEstimate(
+        return IncomeTaxEstimate(
+            province=self.province,
             gross_income=self.income,
             federal_tax=round(federal_tax, 2),
             provincial_tax=round(provincial_tax, 2),

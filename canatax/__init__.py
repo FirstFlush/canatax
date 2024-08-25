@@ -1,1 +1,2 @@
-from canatax.tax_calculator import TaxCalculator
+from canatax.calculators import IncomeTaxCalculator
+from canatax.calculators import SalesTaxCalculator

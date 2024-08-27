@@ -1,11 +1,13 @@
+from abc import ABC
 from canatax.enums import *
 from canatax.exc import InvalidProvinceError
 from canatax.rates.income_rates import *
 from canatax.rates.sales_rates import *
 
 
-class BaseCalculator:
+class BaseCalculator(ABC):
 
+    province = None
     PROVINCE_MAPPING = {
         ProvinceOrTerritory.ALBERTA : (AlbertaIncomeTaxRate, AlbertaSalesTaxRate),
         ProvinceOrTerritory.BRITISH_COLUMBIA: (BritishColumbiaIncomeTaxRate, BritishColumbiaSalesTaxRate),
@@ -22,6 +24,18 @@ class BaseCalculator:
         ProvinceOrTerritory.YUKON : (YukonIncomeTaxRate, YukonSalesTaxRate),
     }
 
+
+    def _get_tax_rate(self, tax_type:TaxType) -> ProvincialIncomeTaxRate | BaseSalesTaxRate:
+        tax_rate_tuple = self.PROVINCE_MAPPING[self.province]
+        match tax_type:
+            case TaxType.INCOME:
+                return tax_rate_tuple[0]()
+            case TaxType.SALES:
+                return tax_rate_tuple[1]()
+            case _:
+                raise ValueError(f"Invalid param tax_type: `{tax_type}` ")
+
+
     def __init__(self, province:str|ProvinceOrTerritory):
         """
         Initializes the calculator with a province or territory.
@@ -36,7 +50,7 @@ class BaseCalculator:
             try:
                 self.province = ProvinceOrTerritory(province.upper())
             except ValueError as e:
-                raise InvalidProvinceError() from e
+                raise InvalidProvinceError(province) from e
         elif isinstance(province, ProvinceOrTerritory):
             self.province = province
         else:

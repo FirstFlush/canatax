@@ -1,5 +1,6 @@
-from canatax.calculators.base_calclulator import BaseCalculator
-from canatax.enums import ProvinceOrTerritory
+from decimal import Decimal, ROUND_HALF_UP
+from canatax.calculators.base_calculator import BaseCalculator
+from canatax.enums import ProvinceOrTerritory, TaxType
 from canatax.tax_estimate import SalesTaxEstimate
 from canatax.rates.sales_rates import BaseSalesTaxRate
 from canatax.utils import percent_to_decimal
@@ -9,7 +10,9 @@ class SalesTaxCalculator(BaseCalculator):
 
     def __init__(self, province:ProvinceOrTerritory):
         super().__init__(province=province)
-        self.tax_rate:BaseSalesTaxRate = self.PROVINCE_MAPPING[self.province][1]() 
+        self.tax_rate = self._get_tax_rate(TaxType.SALES)
+
+
 
 
     @classmethod
@@ -19,12 +22,12 @@ class SalesTaxCalculator(BaseCalculator):
 
 
     def calculate(self, amount:float) -> SalesTaxEstimate:
-        amount = float(amount)
-        gst_total = amount * percent_to_decimal(self.tax_rate.GST) if self.tax_rate.GST else 0
-        pst_total = amount * percent_to_decimal(self.tax_rate.PST) if self.tax_rate.PST else 0
-        hst_total = amount * percent_to_decimal(self.tax_rate.HST) if self.tax_rate.HST else 0
-        tax_total = gst_total + pst_total + hst_total
-        after_tax_total = amount + tax_total
+        amount = Decimal(amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        gst_total = (amount * percent_to_decimal(self.tax_rate.GST)).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP) if self.tax_rate.GST else Decimal('0.00')
+        pst_total = (amount * percent_to_decimal(self.tax_rate.PST)).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP) if self.tax_rate.PST else Decimal('0.00')
+        hst_total = (amount * percent_to_decimal(self.tax_rate.HST)).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP) if self.tax_rate.HST else Decimal('0.00')
+        tax_total = (gst_total + pst_total + hst_total).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        after_tax_total = (amount + tax_total).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
         return SalesTaxEstimate(
             province=self.province,
             before_tax_total=amount,

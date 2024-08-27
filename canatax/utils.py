@@ -1,9 +1,9 @@
-# Handy utility functions used by multiple classes
+from decimal import Decimal
 
 
-def to_currency(n:float) -> str:
+def to_currency(n:float|Decimal) -> str:
     return f"{n:,.2f}"
 
 
-def percent_to_decimal(n:float) -> float:
-    return n / 100
+def percent_to_decimal(n:float|Decimal) -> Decimal:
+    return Decimal(n / 100)

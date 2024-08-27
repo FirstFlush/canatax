@@ -1,6 +1,11 @@
 from enum import Enum
 
 
+class TaxType(Enum):
+    INCOME = 'income'
+    SALES = 'sales'
+
+
 class ProvinceOrTerritory(Enum):
     ALBERTA = 'AB'
     BRITISH_COLUMBIA = 'BC'

@@ -1,5 +1,6 @@
-from canatax.calculators.base_calclulator import BaseCalculator
-from canatax.enums import ProvinceOrTerritory
+from decimal import Decimal, ROUND_HALF_UP
+from canatax.calculators.base_calculator import BaseCalculator
+from canatax.enums import ProvinceOrTerritory, TaxType
 from canatax.tax_estimate import IncomeTaxEstimate
 from canatax.rates.income_rates import *
 from canatax.utils import percent_to_decimal
@@ -15,14 +16,15 @@ class IncomeTaxCalculator(BaseCalculator):
     CPP_MAX_AMOUNT = 3867.50
 
 
-    def __init__(self, income:float|int, province:ProvinceOrTerritory):
+    def __init__(self, income:float|int|Decimal, province:ProvinceOrTerritory):
         super().__init__(province=province)
-        self.income = income
+        self.income = Decimal(income).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
         self.federal_tax = FederalIncomeTaxRate()
-        self.provincial_tax:ProvincialIncomeTaxRate = self.PROVINCE_MAPPING[self.province][0]()
+        self.provincial_tax:ProvincialIncomeTaxRate = self._get_tax_rate(TaxType.INCOME)
+
 
     @classmethod
-    def calculate(cls, income:float|int, province:str) -> IncomeTaxEstimate:
+    def calculate(cls, income:float|int|Decimal, province:str) -> IncomeTaxEstimate:
         try:
             province = ProvinceOrTerritory(province.upper())
         except ValueError:
@@ -33,6 +35,7 @@ class IncomeTaxCalculator(BaseCalculator):
         )
         return calculator.calculate_all()
 
+
     def calculate_all(self) -> IncomeTaxEstimate: 
         federal_tax, provincial_tax = self._tax()
         ei = self._ei()
@@ -42,31 +45,33 @@ class IncomeTaxCalculator(BaseCalculator):
         return IncomeTaxEstimate(
             province=self.province,
             gross_income=self.income,
-            federal_tax=round(federal_tax, 2),
-            provincial_tax=round(provincial_tax, 2),
-            ei=round(ei, 2),
-            cpp=round(cpp, 2),
-            total_tax=round(total_tax, 2),
-            net_income=round(net_income, 2),
+            federal_tax=federal_tax,
+            provincial_tax=provincial_tax,
+            ei=ei,
+            cpp=cpp,
+            total_tax=total_tax,
+            net_income=net_income,
         )
 
-    def _cpp(self) -> float:
+    def _cpp(self) -> Decimal:
         if self.income > self.CPP_MAX_EARNINGS:
-            return self.CPP_MAX_AMOUNT
+            return Decimal(self.CPP_MAX_AMOUNT).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
         else:
-            return self.income * percent_to_decimal(self.CPP_RATE)
+            return (self.income * percent_to_decimal(self.CPP_RATE)).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
-    def _ei(self) -> float:
+    def _ei(self) -> Decimal:
         if self.income > self.EI_MAX_EARNINGS:
-            return self.EI_MAX_AMOUNT
+            return Decimal(self.EI_MAX_AMOUNT).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
         else:
-            return self.income * percent_to_decimal(self.EI_RATE)
+            return (self.income * percent_to_decimal(self.EI_RATE)).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
-    def _tax(self) -> tuple[float, float]:
-        if not isinstance(self.income, (float, int)):
+
+    def _tax(self) -> tuple[Decimal, Decimal]:
+        """Return federal tax and provincial tax as a tuple object."""
+        if not isinstance(self.income, (Decimal)):
             raise TypeError(f"Parameter 'income' must be of type int or float, not `{type(self.income)}`")
-        federal_tax = self.federal_tax.calculate_tax(self.income)
-        provincial_tax = self.provincial_tax.calculate_tax(self.income)
+        federal_tax = self.federal_tax.calculate_tax(self.income).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        provincial_tax = self.provincial_tax.calculate_tax(self.income).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
         return federal_tax, provincial_tax
     
 

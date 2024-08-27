@@ -1,4 +1,4 @@
-
+from decimal import Decimal
 
 
 class BaseSalesTaxRate:
@@ -12,11 +12,11 @@ class BaseSalesTaxRate:
         applicable_taxes = [tax for tax in self.tax_types if tax is not None]
         if not applicable_taxes:
             raise AttributeError(f"`{self.__class__.__name__}`: GST, PST, and HST are all None type!")
-        return sum(applicable_taxes)
+        return Decimal(sum(applicable_taxes))
 
     @property
-    def tax_types(self) -> list[float|None]:
-        return [self.GST, self.PST, self.HST]
+    def tax_types(self) -> list[Decimal|None]:
+        return [Decimal(self.GST), Decimal(self.PST), Decimal(self.HST)]
 
 class AlbertaSalesTaxRate(BaseSalesTaxRate):
     

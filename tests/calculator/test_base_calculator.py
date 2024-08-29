@@ -8,9 +8,6 @@ from canatax.rates.sales_rates import BaseSalesTaxRate
 
 class TestBaseCalculator(unittest.TestCase):
 
-    # def setUp(self):
-    #     self.provinces = [province for province in ProvinceOrTerritory]
-
     def test_tax_rate(self):
 
         for tax_type in TaxType:

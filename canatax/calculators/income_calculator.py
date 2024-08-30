@@ -16,12 +16,31 @@ class IncomeTaxCalculator(BaseCalculator):
     CPP_MAX_AMOUNT = 3867.50
 
 
-    def __init__(self, income:float|int|Decimal, province:ProvinceOrTerritory):
+    def __init__(self, income:int|float|Decimal, province:ProvinceOrTerritory):
+
+        income = self._decimalize(income)
         super().__init__(province=province)
         self.income = Decimal(income).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-        self.federal_tax = FederalIncomeTaxRate()
-        self.provincial_tax:ProvincialIncomeTaxRate = self._get_tax_rate(TaxType.INCOME)
+        self.federal_tax_rate = FederalIncomeTaxRate()
+        self.provincial_tax_rate:ProvincialIncomeTaxRate = self._get_tax_rate(TaxType.INCOME)
 
+
+    def calculate_all(self) -> IncomeTaxEstimate: 
+        federal_tax_rate, provincial_tax_rate = self._tax()
+        ei = self._ei()
+        cpp = self._cpp()
+        total_tax = federal_tax_rate + provincial_tax_rate + ei + cpp
+        net_income = self.income - total_tax
+        return IncomeTaxEstimate(
+            province=self.province,
+            gross_income=self.income,
+            federal_tax=federal_tax_rate,
+            provincial_tax=provincial_tax_rate,
+            ei=ei,
+            cpp=cpp,
+            total_tax=total_tax,
+            net_income=net_income,
+        )
 
     @classmethod
     def calculate(cls, income:float|int|Decimal, province:str) -> IncomeTaxEstimate:
@@ -35,23 +54,6 @@ class IncomeTaxCalculator(BaseCalculator):
         )
         return calculator.calculate_all()
 
-
-    def calculate_all(self) -> IncomeTaxEstimate: 
-        federal_tax, provincial_tax = self._tax()
-        ei = self._ei()
-        cpp = self._cpp()
-        total_tax = federal_tax + provincial_tax + ei + cpp
-        net_income = self.income - total_tax
-        return IncomeTaxEstimate(
-            province=self.province,
-            gross_income=self.income,
-            federal_tax=federal_tax,
-            provincial_tax=provincial_tax,
-            ei=ei,
-            cpp=cpp,
-            total_tax=total_tax,
-            net_income=net_income,
-        )
 
     def _cpp(self) -> Decimal:
         if self.income > self.CPP_MAX_EARNINGS:
@@ -68,10 +70,8 @@ class IncomeTaxCalculator(BaseCalculator):
 
     def _tax(self) -> tuple[Decimal, Decimal]:
         """Return federal tax and provincial tax as a tuple object."""
-        if not isinstance(self.income, (Decimal)):
-            raise TypeError(f"Parameter 'income' must be of type int or float, not `{type(self.income)}`")
-        federal_tax = self.federal_tax.calculate_tax(self.income).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-        provincial_tax = self.provincial_tax.calculate_tax(self.income).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        federal_tax = self.federal_tax_rate.calculate_tax(self.income).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        provincial_tax = self.provincial_tax_rate.calculate_tax(self.income).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
         return federal_tax, provincial_tax
     
 

@@ -39,14 +39,10 @@ class TestSalesTaxCalculator(unittest.TestCase):
                 with self.assertRaises(expected_exception=InvalidDollarAmount):
                     calc.calculate(amount)
 
-
-
-    def test_calculate_return_values(self):
-        """Test that the SalesTaxCalculator correctly calculates sales 
-        tax and returns the expected SalesTaxEstimate values.
-        """
-
-
+    # def test_calculate_return_values(self):
+    #     """Test that the SalesTaxCalculator correctly calculates sales 
+    #     tax and returns the expected SalesTaxEstimate values.
+    #     """
 
     @patch('canatax.rates.sales_rates.BaseSalesTaxRate.GST', new_callable=PropertyMock)
     @patch('canatax.rates.sales_rates.BaseSalesTaxRate.PST', new_callable=PropertyMock)

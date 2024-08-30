@@ -20,6 +20,18 @@ class BaseTaxEstimate:
         return d2
 
     def to_dict(self, prettify:bool=False) -> dict[str, Any]:
+        """Convert the object's attributes to a dictionary representation.
+
+        Args:
+            prettify (bool): If True, applies formatting to the dictionary values.
+                            - Floats are formatted as currency strings.
+                            - `ProvinceOrTerritory` enum values are converted to their string representation.
+                            Defaults to False.
+
+        Returns:
+            dict[str, Any]: A dictionary containing the object's attributes. 
+                            If `prettify` is True, the dictionary values are formatted accordingly.
+        """
         d = asdict(self)
         if prettify:
             d = self._prettify(d)

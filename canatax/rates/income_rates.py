@@ -140,8 +140,17 @@ class NewfoundlandIncomeTaxRate(ProvincialIncomeTaxRate):
 class NorthwestTerritoriesIncomeTaxRate(ProvincialIncomeTaxRate):
     """ 2024
     ==========================
-
+    5.9% 	on the portion of taxable income that is $50,597 or less, plus
+    8.6% 	on the portion of taxable income over $50,597 up to $101,198, plus
+    12.2% 	on the portion of taxable income over $101,198 up to $164,525, plus
+    14.05% 	on the portion of taxable income over $164,525
     """
+    brackets = [
+        (5.9, 50597),
+        (8.6, 101198),
+        (12.2, 164525),
+        (14.05, float('inf')),
+    ]
 
 
 class NovaScotiaIncomeTaxRate(ProvincialIncomeTaxRate):

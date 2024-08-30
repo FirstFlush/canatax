@@ -18,6 +18,7 @@ class BaseSalesTaxRate:
     def tax_types(self) -> list[Decimal|None]:
         return [Decimal(self.GST), Decimal(self.PST), Decimal(self.HST)]
 
+
 class AlbertaSalesTaxRate(BaseSalesTaxRate):
     
     GST = 5

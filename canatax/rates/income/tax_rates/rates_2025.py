@@ -9,7 +9,7 @@ from canatax.rates.income.base import BaseIncomeTaxRate, ProvincialIncomeTaxRate
 
 class FederalIncomeTaxRate(BaseIncomeTaxRate):
     """
-    15% 	on the portion of taxable income that is $57,375 or less, plus
+    14.5% 	on the portion of taxable income that is $57,375 or less, plus (changed mid 2025 from 15% to 14%)
     20.5% 	on the portion of taxable income over $57,375 up to $114,750, plus
     26% 	on the portion of taxable income over $114,750 up to $177,882, plus
     29% 	on the portion of taxable income over $177,882 up to $253,414, plus
@@ -17,12 +17,13 @@ class FederalIncomeTaxRate(BaseIncomeTaxRate):
     """
     
     _BPA_MIN = Decimal(14538) # https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4032-payroll-deductions-tables/t4032on-jan/t4032on-january-general-information.html
-    _BPA_MAX = Decimal(15705)
-    _BPA_PHASE_OUT_START = Decimal("173205")
-    _BPA_PHASE_OUT_END = Decimal("246752")
-    
+    _BPA_MAX = Decimal(16129) # late update in 2025, reference bank websites
+    _BPA_PHASE_OUT_START = Decimal("177882")
+    _BPA_PHASE_OUT_END = Decimal("253414")
+
+    # https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/canadian-income-tax-rates-individuals-current-previous-years.html
     brackets = [
-        (15, 57375),
+        (14.5, 57375),
         (20.5, 114750),
         (26, 177882),
         (29, 253414),
